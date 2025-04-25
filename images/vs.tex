@@ -1,0 +1,14 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{fadings,patterns}
+
+\begin{document}
+	\tikzfadingfrompicture[name=vs]
+		\node[text=transparent!20] {\fontencoding{T1}\fontfamily{ptm}\fontsize{75}{75}\bfseries\selectfont VS};
+	\endtikzfadingfrompicture
+	% Now we use the fading in another picture:
+	\begin{tikzpicture}
+		\shade[path fading=vs, fit fading=false, left color=red, right color=red!20!yellow] (-2,-2) rectangle (2,2);
+		%\draw[black] (-2,-2) rectangle (2,2);
+	\end{tikzpicture}
+\end{document}

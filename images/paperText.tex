@@ -1,0 +1,17 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{decorations.text,math}
+
+\tikzset{every picture/.style={/utils/exec={\fontencoding{T1}\fontfamily{ptm}\fontsize{20}{20}\bfseries\selectfont}}}
+
+\begin{document}	
+	\begin{tikzpicture}[decoration={text effects along path,
+			text={PAPER},
+			text effects/.cd,
+			path from text,
+			every word/.style={fill=gray},
+			every letter/.style={text=white},
+			characters={text along path, shape=circle}}]
+		\path [decorate] (0,0);
+	\end{tikzpicture}
+\end{document}

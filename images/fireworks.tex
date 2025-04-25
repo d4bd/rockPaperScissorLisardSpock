@@ -1,0 +1,16 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{trees,fadings,patterns}
+
+\begin{document}
+	\begin{tikzpicture}
+		[line width=2pt, grow cyclic, 
+		level 1/.style={level distance=2cm,sibling angle=36},
+		level 2/.style={level distance=1cm,sibling angle=24},
+		level 3/.style={level distance=1cm,sibling angle=30}]
+		\coordinate [rotate=-90] % going down
+		child[draw=red] foreach \x in {1,...,10}
+			{child[draw=red!50!yellow] foreach \x in {1,...,5}
+				{child[draw=yellow] foreach \x in {1,2}}};
+	\end{tikzpicture}
+\end{document}

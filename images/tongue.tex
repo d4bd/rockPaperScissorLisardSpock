@@ -1,0 +1,14 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
+\begin{document}
+	\begin{tikzpicture}
+		[draw=red, grow cyclic, 
+		level 1/.style={level distance=1mm},
+		level 2/.style={level distance=1mm,sibling angle=60}]
+		\coordinate [rotate=-90] % going down
+		child foreach \x in {1}
+		{child foreach \x in {1,2}};
+	\end{tikzpicture}
+\end{document}

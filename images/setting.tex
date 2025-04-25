@@ -1,0 +1,15 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary {decorations.text,math}
+
+\begin{document}	
+	\begin{tikzpicture}[decoration={text effects along path,
+			text={Rock Paper Scissor Lizard Spock}, 
+			text effects/.cd,
+			path from text, word count=\i, every word separator/.style={fill=red!50},
+			every word/.style={evaluate={\c=100/\i;}, fill=red!\c!blue},
+			every letter/.style={text=white},
+			characters={text along path, shape=circle}}]
+		\path [decorate] (0,0);
+	\end{tikzpicture}
+\end{document}

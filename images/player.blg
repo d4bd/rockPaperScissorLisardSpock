@@ -1,0 +1,5 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'player.blg'
+[64] biber:340> INFO - === Wed Jun 21, 2023, 18:03:14
+[212] Utils.pm:410> ERROR - Cannot find 'player.bcf'!
+[212] Biber.pm:136> INFO - ERRORS: 1

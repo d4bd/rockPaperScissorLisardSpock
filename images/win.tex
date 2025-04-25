@@ -1,0 +1,15 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.symbols}
+
+\begin{document}
+	\begin{tikzpicture}
+		\begin{scope}[transparency group, opacity=0.4]
+			\node[starburst, fill=yellow, draw=red, line width=5pt, minimum height=7cm, starburst points=12, starburst point height=2cm, minimum height=8cm, minimum width=12cm] {};
+%			\draw [line width=5mm,color=red] (-2,-2) -- (2,2);
+%			\draw [line width=5mm,color=red] (2,-2) -- (-2,2);
+%			\node[color=blue] at (0,0) {\fontencoding{T1}\fontfamily{ptm}\fontsize{50}{50}\bfseries\selectfont LOSS};
+		\end{scope}
+		\node[text=red] at (0,0) {\fontencoding{T1}\fontfamily{ptm}\fontsize{45}{45}\bfseries\selectfont WINNER};
+	\end{tikzpicture}
+\end{document}

@@ -1,0 +1,15 @@
+\documentclass{standalone}
+\usepackage{tikz}
+
+\begin{document}
+	\pgfdeclareverticalshading{gray}{80bp}{color(0bp)=(gray); color(80bp)=(gray)}
+	\begin{pgfpicture}
+		\pgfsetcornersarced{\pgfpoint{5pt}{5pt}}
+		\pgfpathmoveto{\pgfpointpolar{0}{-0.5cm}}
+		\pgfpathlineto{\pgfpointpolar{0}{5cm}}
+		\pgfpathlineto{\pgfpointpolar{90}{1cm}}
+		\pgfpathclose
+		\pgfshadepath{gray}{-30}
+		\pgfusepath{stroke}
+	\end{pgfpicture}
+\end{document}

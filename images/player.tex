@@ -1,0 +1,16 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary {decorations.text,math}
+
+\usepackage{twemojis}
+
+\begin{document}
+	\begin{tikzpicture}[decoration={text effects along path,
+			text={PLAYER}, 
+			text effects/.cd,
+			path from text, character count=\i, character total=\n, characters={text along path}, character widths={text along path, xslant=0, yscale=1}}]
+		\path [postaction={decorate}, preaction={decorate, text effects={characters/.append={yscale=1.5, opacity=0.5,	text=gray, xslant=(\i/\n-0.5)*3}}}] (0,0);
+		
+		\node at (2.2,0.2) {\twemoji[width=0.5cm]{technologist}};
+	\end{tikzpicture}
+\end{document}

@@ -1,0 +1,17 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.symbols}
+
+\begin{document}
+	\begin{tikzpicture}
+		\begin{scope}[transparency group, opacity=0.4]
+			\fill[color=gray] (-6.125,-6.25) rectangle (6.38,6.3);
+			\node[color=red] at (0,0) {};
+%			\draw[black] (-4.2,-4.25) rectangle (4.38,4.3);
+%			\draw [line width=5mm,color=red] (-2,-2) -- (2,2);
+%			\draw [line width=5mm,color=red] (2,-2) -- (-2,2);
+%			\node[color=blue] at (0,0) {\fontencoding{T1}\fontfamily{ptm}\fontsize{50}{50}\bfseries\selectfont LOSS};
+		\end{scope}
+		\node[text=red] at (0.1,0) {\fontencoding{T1}\fontfamily{ptm}\fontsize{45}{45}\bfseries\selectfont LOSER};
+	\end{tikzpicture}
+\end{document}

@@ -1,0 +1,21 @@
+\documentclass{standalone}
+\usepackage{tikz}
+
+\begin{document}
+	\pgfdeclareverticalshading{inside}{100bp}
+	{color(0bp)=(black!80!gray); color(60bp)=(white)}
+	\begin{tikzpicture}
+		\pgfsetcornersarced{\pgfpoint{5pt}{5pt}}
+		\pgfpathmoveto{\pgfpointpolar{0}{-0.5cm}}
+		\pgfpathlineto{\pgfpointpolar{0}{2cm}}
+		\pgfpathlineto{\pgfpointpolar{30}{2.5cm}}
+		\pgfpathlineto{\pgfpointpolar{45}{2.6cm}}
+		\pgfpathlineto{\pgfpointpolar{70}{2.5cm}}
+		\pgfpathlineto{\pgfpointpolar{105}{2.3cm}}
+		\pgfpathlineto{\pgfpointpolar{120}{2cm}}
+		\pgfpathlineto{\pgfpointpolar{150}{1cm}}
+		\pgfpathclose
+		\pgfshadepath{inside}{-30}
+		\pgfusepath{stroke}
+	\end{tikzpicture}
+\end{document}
