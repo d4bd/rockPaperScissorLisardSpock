@@ -1,0 +1,367 @@
+\documentclass{article}
+\usepackage[mode=buildnew]{standalone}
+\usepackage{currfile}
+\usepackage{twemojis}
+\usepackage{tikz}
+\usetikzlibrary{fadings,patterns,shapes.symbols,decorations.text,math,decorations.pathmorphing,spy,trees,calc}
+\pgfmathsetseed{\number\pdfrandomseed} %Random seed every compilation for random number generator
+
+\tikzset{
+	mirror scope/.is family,
+	mirror scope/angle/.store in=\mirrorangle,
+	mirror scope/center/.store in=\mirrorcenter,
+	mirror setup/.code={\tikzset{mirror scope/.cd,#1}},
+	mirror scope/.style={mirror setup={#1},spy scope={
+			rectangle,lens={rotate=\mirrorangle,yscale=-1,rotate=-1*\mirrorangle},size=80cm}},
+}
+\newcommand\mirror[1][]{\spy[overlay,#1] on (\mirrorcenter) in node at (\mirrorcenter)}
+
+%----------------------------------------------------------------------------------------------------
+%	Counters
+%----------------------------------------------------------------------------------------------------
+
+\makeatletter
+
+\newcounter{@errorList}% 
+\newcounter{@error}%
+\newcounter{@result}%
+
+\makeatother
+
+%----------------------------------------------------------------------------------------------------
+%	Definition of all the possible different pieces
+%----------------------------------------------------------------------------------------------------
+
+\def\choicesNames{scissor,paper,rock,lizard,spock} %Will be threated as 0,1,2,3,4 in the program
+
+%----------------------------------------------------------------------------------------------------
+%	Drawings
+%----------------------------------------------------------------------------------------------------
+
+\tikzset{
+	0/.pic={
+		\node[text=gray] at (3,5) {\fontencoding{T1}\fontfamily{ptm}\fontsize{25}{25}\bfseries\selectfont SCISSOR};
+		\draw[black] (0,0) rectangle (6,6);
+		\node[draw=none,fill=none,rotate=30] at (3.1,2.3) {\includestandalone[scale=0.4]{./images/scissor}};
+	}
+}
+
+\tikzset{
+	1/.pic={
+		\node[text=black] at (3,5) {\fontencoding{T1}\fontfamily{ptm}\fontsize{25}{25}\bfseries\selectfont PAPER};
+		\draw[black] (0,0) rectangle (6,6);
+		\node[draw=none,fill=none] at (2.8,2.3) {\includestandalone[scale=0.7]{./images/paper}};
+	}
+}
+
+\tikzset{
+	2/.pic={
+		\node[text=black!40!gray] at (3,5) {\fontencoding{T1}\fontfamily{ptm}\fontsize{25}{25}\bfseries\selectfont ROCK};
+		\draw[black] (0,0) rectangle (6,6);
+		\node[draw=none,fill=none] at (2.8,2.3) {\includestandalone[scale=1.5]{./images/rock}};
+	}
+}
+
+\tikzset{
+	3/.pic={
+		\node[text=black!40!green] at (3,5) {\fontencoding{T1}\fontfamily{ptm}\fontsize{25}{25}\bfseries\selectfont LIZARD};
+		\draw[black] (0,0) rectangle (6,6);
+		\node[draw=none,fill=none,rotate=-30] at (3.2,2.2) {\includestandalone[scale=2]{./images/lizard}};
+	}
+}
+
+\tikzset{
+	4/.pic={
+		\node[text=black] at (3,5) {\fontencoding{T1}\fontfamily{ptm}\fontsize{25}{25}\bfseries\selectfont SPOCK};
+		\draw[black] (0,0) rectangle (6,6);
+		\node[draw=none,fill=none,rotate=90] at (3.2,2.2) {\includestandalone[scale=0.8]{./images/spock}};
+	}
+}
+
+\tikzset{
+	win/.pic={
+		\node[draw=none,fill=none] at (3,-1.1) {\includestandalone[scale=0.48]{./images/win}};
+		\draw[black] (0,-4) rectangle (6,2);
+	}
+}
+
+\tikzset{
+	loss/.pic={
+		\node[draw=none,fill=none] at (2.82,-1) {\includestandalone[scale=0.48]{./images/loss}};
+		\draw[black] (0,-4) rectangle (6,2);
+	}
+}
+
+\tikzset{
+	draw/.pic={
+		\node[draw=none,fill=none] at (6,1) {\includestandalone[scale=1.2]{./images/draw}};
+		\draw[black] (0,-2) rectangle (12,4);
+	}
+}
+
+\tikzset{
+	vs/.pic={
+		\node[draw=none,fill=none] at (0.82,1) {\includestandalone[scale=0.5]{./images/vs}};
+		\draw[black] (0,0) rectangle (2,2);
+	}
+}
+
+\tikzset{
+	player/.pic={
+		\node[draw=none,fill=none] at (2.45,1) {\includestandalone[scale=1.55]{./images/player}};
+		\draw[black] (0,0) rectangle (5,2);
+	}
+}
+
+\tikzset{
+	computer/.pic={
+		\node[draw=none,fill=none] at (2.25,1) {\includestandalone[scale=1.55]{./images/computer}};
+		\draw[black] (0,0) rectangle (5,2);
+	}
+}
+
+\tikzset{
+	setting/.pic={
+		\node[draw=none,fill=none] at (5.82,1) {\includestandalone[scale=0.88]{./images/setting}};
+		\draw[black] (0,0) rectangle (12,2);
+	}
+}
+
+\tikzset{
+	result/.pic={
+		\node[draw=none,fill=none] at (5.82,1) {\includestandalone[scale=0.88]{./images/result}};
+		\draw[black] (0,0) rectangle (12,2);
+	}
+}
+
+\tikzset{
+	up/.pic={
+		\pic at (0,6) {player};
+		
+		\pic at (7,6) {computer};
+		
+		\pic at (5,6) {vs};
+	}
+}
+
+\tikzset{
+	upSetting/.pic={
+		\pic at (0,8) {setting};
+		\pic at (0,0) {up};
+	}
+}
+
+\tikzset{
+	upResult/.pic={
+		\pic at (0,8) {result};
+		\pic at (0,0) {up};
+	}
+}
+
+
+%----------------------------------------------------------------------------------------------------
+%	Support functions
+%----------------------------------------------------------------------------------------------------
+
+\makeatletter
+
+%Calculation of modulo operation
+\newcommand*{\@modulo}[3]{%
+	#3=#1\relax%
+	\divide#3 by #2\relax%
+	\multiply#3 by #2\relax%
+	\multiply#3 by -1\relax%
+	\advance#3 by #1\relax%
+}
+
+%Random number generator
+\pgfmathrandominteger{\randomInt}{0}{4}
+
+%Access nth element of a list, the inputs are the list and the number of the element one wants
+\newcommand*{\@nthElement}[2]{
+	%
+	\setcounter{@errorList}{0}%
+	%
+	\foreach \@elem[count=\m from 0] in #1{%
+		\ifnum\m=#2\relax%
+			\@elem%
+			\addtocounter{@errorList}{1}%
+			\breakforeach%	
+		\fi%
+	}
+	%At the end checks the counter value, if it is 0, i.e. the user asked for an element characterized by a number bigger than the lenght of the list returns an error
+	\ifnum\the@errorList=0\relax%
+		\errmessage{Trying to access the element m of a list of lenght n<m}%
+	\fi%
+}
+
+%----------------------------------------------------------------------------------------------------
+%	Drawing functions
+%----------------------------------------------------------------------------------------------------
+
+\newcommand*{\@drawTable}[2]{%
+	\begin{tikzpicture}
+		\centering
+		\pic at (0,0) {#1};
+		\pic at (6,0) {#2};
+		\pic at (0,0) {upSetting};
+	\end{tikzpicture}
+}
+
+\newcommand*{\@drawResults}[2]{%
+	\ifnum\the@result=1\relax%
+		\begin{tikzpicture}
+			\centering
+			\pic at (0,0) {#1};
+			\pic at (6,0) {#2};
+			\pic at (0,0) {upResult};
+			
+			\pic at (0,2) {draw};
+		\end{tikzpicture}	
+	\else
+		\ifnum\the@result=2\relax%
+			\begin{tikzpicture}
+				\centering
+				\pic at (0,0) {#1};
+				\pic at (6,0) {#2};
+				\pic at (0,0) {upResult};
+								
+				\pic at (0,4) {win};
+				\pic at (6.2,4) {loss};
+			\end{tikzpicture}
+		\else
+			\ifnum\the@result=3\relax%	
+				\begin{tikzpicture}
+					\centering
+					\pic at (0,0) {#1};
+					\pic at (6,0) {#2};
+					\pic at (0,0) {upResult};
+					
+					\pic at (0.2,4) {loss};
+					\pic at (6,4) {win};	
+				\end{tikzpicture}
+			\else
+				\errmessage{Something went really wrong. There isn't a winner or a draw}%	
+			\fi
+		\fi
+	\fi%
+
+}
+
+%----------------------------------------------------------------------------------------------------
+%	Program
+%----------------------------------------------------------------------------------------------------
+
+%Checks whether the input passed by the user is one of the possible choices
+\newcommand*{\@checkInput}[1]{%
+	%
+	\setcounter{@error}{0}%
+	%
+	%Cicles within the list of the accepted inputs, if it does not find a match, a counter is increased by one
+	\def\choice{#1}%
+	\foreach \@choice in \choicesNames{%
+		\ifx\choice\@choice\relax%
+			\addtocounter{@error}{1}%
+			\breakforeach%	
+		\fi%
+	}%	
+	%At the end checks the counter value, if it is 0 the element is not in the list adn returns an error
+	\ifnum\the@error=0\relax%
+		\errmessage{Provided wrong input. The options are (case sensitive): \choicesNames}%
+	\fi%
+}
+
+%Function to determine the winner
+%The inputs are supposed to be the numerical representation of the choices
+\newcommand*{\@winner}[2]{%
+	\setcounter{@result}{0}%
+	%Starts by checking whether it is a draw (same number)
+	\ifnum#1=#2\relax
+		%Draw%		
+		\setcounter{@result}{1}%
+		\message{draw}
+	%Otherwise tries defines the winner
+	\else%
+		%Creates a temporary counter for the modulo function
+		\newcount\@tempCnt%
+		%Checks first winning condition
+		\@modulo{\numexpr#1+1}{5}{\@tempCnt}%
+		\ifnum\the\@tempCnt=#2\relax%
+			%The player wins
+			\setcounter{@result}{2}%
+			\message{The player wins}
+			\message{Winning condition number one}
+		\else%
+			%Checks second winning condition
+			\@modulo{\numexpr#1+3}{5}{\@tempCnt}
+			\ifnum\the\@tempCnt=#2\relax%
+				%The player wins
+				\setcounter{@result}{2}%
+				\message{The player wins}
+				\message{Winning condition number two}
+			\else%
+				%The machine wins%
+				\setcounter{@result}{3}%
+				\message{The machine wins}
+			\fi
+		\fi
+	\fi
+	\@drawResults{#1}{#2}
+}
+
+%Main function
+\newcommand*{\main}[1]{%
+	\@checkInput{#1}%
+	%
+	\def\choice{#1}%
+	\foreach \@choice[count=\n from 0] in \choicesNames{%
+		\ifx\choice\@choice%
+			\@drawTable{\n}{\randomInt}
+			\@winner{\n}{\randomInt}%
+			\breakforeach%
+		\fi%
+	}%
+}
+
+\makeatother
+
+\begin{document}
+\begin{center}
+	{\fontencoding{T1}\fontfamily{ptm}\fontsize{75}{75}\bfseries\selectfont RULES};	
+	
+	\vspace{2cm}
+	
+	\scalebox{0.8}{\begin{tikzpicture}
+		\coordinate (a) at (90:6.5cm);
+		\coordinate (b) at (18:6.5cm);
+		\coordinate (c) at (-54:6.5cm);
+		\coordinate (d) at (234:6.5cm);
+		\coordinate (e) at (162:6.5cm);
+		
+		\pic[xshift=-3cm,yshift=-3cm] at (a) {0};
+		\pic[xshift=-3cm,yshift=-3cm] at (b) {1};
+		\pic[xshift=-3cm,yshift=-3cm] at (c) {2};
+		\pic[xshift=-3cm,yshift=-3cm] at (d) {3};
+		\pic[xshift=-3cm,yshift=-3cm] at (e) {4};
+		
+		\draw[->, >=latex, blue, line width=10pt] ($(a) + (3,0)$) to node[white,sloped]{CUTS} ($(b) + (0,3)$);
+		\draw[->, >=latex, blue, line width=10pt] ($(a) + (0,-3)$) to node[white,sloped]{DECAPITATES} ($(d) + (0,3)$);
+	
+		\draw[->, >=latex, red!60!white, line width=10pt] ($(b) + (0,-3)$) to node[white,sloped]{COVERS} ($(c) + (0,3)$);
+		\draw[->, >=latex, red!60!white, line width=10pt] ($(b) + (-3,0)$) to node[white,sloped]{DISPROVES} ($(e) + (3,0)$);
+		
+		\draw[->, >=latex, gray, line width=10pt] ($(c) + (-3,0)$) to node[white,sloped]{CRUSHES} ($(d) + (3,0)$);
+		\draw[->, >=latex, gray, line width=10pt] ($(c) + (0,3)$) to node[white,sloped]{CRUSHES} ($(a) + (0,-3)$);
+		
+		\draw[->, >=latex, green!80!black, line width=10pt] ($(d) + (0,3)$) to node[white,sloped]{POISONS} ($(e) + (0,-3)$);
+		\draw[->, >=latex, green!80!black, line width=10pt] ($(d) + (0,3)$) to node[white,sloped]{EATS} ($(b) + (-3,0)$);
+	
+		\draw[->, >=latex, cyan, line width=10pt] ($(e) + (0,3)$) to node[white,sloped]{SMASHES} ($(a) + (-3,0)$);
+		\draw[->, >=latex, cyan, line width=10pt] ($(e) + (3,0)$) to node[white,sloped]{VAPORIZES} ($(c) + (0,3)$);
+		
+	\end{tikzpicture}}
+\end{center}	
+	\clearpage
+	
+	\main{rock}
+\end{document}
